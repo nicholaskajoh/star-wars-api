@@ -33,7 +33,7 @@ var sails;
 var rc;
 try {
   sails = require('sails');
-  rc = require('sails/accessible/rc');
+  rc = require('rc');
 } catch (err) {
   console.error('Encountered an error when attempting to require(\'sails\'):');
   console.error(err.stack);
