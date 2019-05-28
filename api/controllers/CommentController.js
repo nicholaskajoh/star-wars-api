@@ -17,6 +17,23 @@ module.exports = {
     } catch (err) {
       return res.status(400).json({ message: err.details });
     }
+  },
+
+  async list(req, res) {
+    try {
+      const movieId = req.params.id;
+
+      const response = await fetch(`https://swapi.co/api/films/${movieId}`, { method: 'GET' });
+      const json = await response.json();
+      if (json.hasOwnProperty('detail') && json.detail == 'Not found') {
+        return res.status(404).json({ message: 'Movie not found.' });
+      }
+
+      const comments = await Comment.find({ movieId }).sort('createdAt DESC');
+      return res.status(200).json({ message: 'Comment retrieved sucessfully.', data: comments });
+    } catch (err) {
+      return res.status(400).json({ message: err.details });
+    }
   }
 
 }

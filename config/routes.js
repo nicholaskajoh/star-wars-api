@@ -19,6 +19,15 @@ module.exports.routes = {
     }
   },
 
+  'GET /movie/:id/comments': {
+    controller: 'CommentController',
+    action: 'list',
+    swagger: {
+      summary: 'Movie comments',
+      description: 'Get the list of comments on a movie.',
+    }
+  },
+
   'POST /comment': {
     controller: 'CommentController',
     action: 'create',
