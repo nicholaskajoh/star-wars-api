@@ -6,7 +6,7 @@ module.exports = {
     try {
       const { movieId, comment } = req.body;
 
-      const response = await fetch(`https://swapi.co/api/films/${movieId}`, { method: 'GET' });
+      const response = await fetch(`https://swapi.co/api/films/${movieId}`);
       const json = await response.json();
       if (json.hasOwnProperty('detail') && json.detail == 'Not found') {
         return res.status(404).json({ message: 'Movie not found.' });
@@ -23,7 +23,7 @@ module.exports = {
     try {
       const movieId = req.params.id;
 
-      const response = await fetch(`https://swapi.co/api/films/${movieId}`, { method: 'GET' });
+      const response = await fetch(`https://swapi.co/api/films/${movieId}`);
       const json = await response.json();
       if (json.hasOwnProperty('detail') && json.detail == 'Not found') {
         return res.status(404).json({ message: 'Movie not found.' });

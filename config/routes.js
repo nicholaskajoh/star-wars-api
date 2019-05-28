@@ -19,6 +19,38 @@ module.exports.routes = {
     }
   },
 
+  'GET /movie/:id/characters': {
+    controller: 'MovieController',
+    action: 'characters',
+    swagger: {
+      summary: 'Movie characters',
+      description: 'Get the list of characters in a movie.',
+      parameters: [
+        {
+          in: 'query',
+          name: 'genderFilter',
+          required: false,
+          type: 'string',
+          description: 'Filter characters by gender: male, female, hermaphrodite or n/a.'
+        },
+        {
+          in: 'query',
+          name: 'sortBy',
+          required: false,
+          type: 'string',
+          description: 'Sort characters by: name, gender or height.'
+        },
+        {
+          in: 'query',
+          name: 'orderBy',
+          required: false,
+          type: 'string',
+          description: 'Order characters in: asc or desc.'
+        },
+      ],
+    },
+  },
+
   'GET /movie/:id/comments': {
     controller: 'CommentController',
     action: 'list',
