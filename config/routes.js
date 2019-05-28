@@ -10,28 +10,26 @@
 
 module.exports.routes = {
 
-  /***************************************************************************
-  *                                                                          *
-  * Make the view located at `views/homepage.ejs` your home page.            *
-  *                                                                          *
-  * (Alternatively, remove this and add an `index.html` file in your         *
-  * `assets` directory)                                                      *
-  *                                                                          *
-  ***************************************************************************/
+  'GET /movies': {
+    controller: 'MovieController',
+    action: 'list',
+    swagger: {
+      summary: 'Movies list',
+      description: 'Get the list of Star Wars movies.',
+    }
+  },
 
-  '/': { view: 'pages/homepage' },
-
-
-  /***************************************************************************
-  *                                                                          *
-  * More custom routes here...                                               *
-  * (See https://sailsjs.com/config/routes for examples.)                    *
-  *                                                                          *
-  * If a request to a URL doesn't match any of the routes in this file, it   *
-  * is matched against "shadow routes" (e.g. blueprint routes).  If it does  *
-  * not match any of those, it is matched against static assets.             *
-  *                                                                          *
-  ***************************************************************************/
-
+  'POST /comment': {
+    controller: 'CommentController',
+    action: 'create',
+    swagger: {
+      summary: 'Create comment',
+      description: 'Comment on a movie.',
+      body: {
+        movieId: { type: 'integer', required: true },
+        comment: { type: 'string', required: true, maxLength: 500 },
+      },
+    }
+  },
 
 };

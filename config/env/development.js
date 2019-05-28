@@ -2,7 +2,7 @@ module.exports = {
 
   port: process.env.APP_PORT,
 
-  datastores: {
+  connections: {
     default: {
       adapter: 'sails-postgresql',
       host: process.env.POSTGRES_HOST,
@@ -14,7 +14,7 @@ module.exports = {
   },
 
   models: {
-    migrate: 'alter',
+    migrate: 'drop',
   },
 
   log: {

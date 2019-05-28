@@ -5,8 +5,11 @@
   "description": "a Sails application",
   "keywords": [],
   "dependencies": {
+    "bluebird": "^3.5.5",
+    "node-fetch": "^2.6.0",
     "sails": "^0.12.14",
     "sails-hook-swagger-generator": "^2.7.1",
+    "sails-hook-validation": "^0.4.7",
     "sails-postgresql": "^1.0.2"
   },
   "devDependencies": {
@@ -31,6 +34,8 @@
     "node": "^8.11"
   },
   "nodemonConfig": {
-    "ignore": ["assets/swagger.json"]
+    "ignore": [
+      "assets/swagger.json"
+    ]
   }
 }
