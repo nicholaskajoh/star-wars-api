@@ -75,11 +75,12 @@ module.exports = {
         const height = character.height == 'unknown' ? 0 : Number.parseInt(character.height);
         return total + height;
       }, 0);
+      const feet = totalHeightOfCharactersCm / 30.48;
+      const inches = (feet % 1) * 12;
       const meta = {
         totalNumberOfCharacters: characters.length,
-        totalHeightOfCharactersCm,
-        totalHeightOfCharactersFt: 5 * totalHeightOfCharactersCm / 170,
-        totalHeightOfCharactersIn: 6.93 * totalHeightOfCharactersCm / 170,
+        totalHeightOfCharactersCm: `${totalHeightOfCharactersCm}cm`,
+        totalHeightOfCharactersFtIn: `${Math.floor(feet)}ft and ${inches.toFixed(2)} inches`,
       };
       return res.status(200).json({
         message: 'Characters retrieved sucessfully.', data: characters, meta,
