@@ -4,8 +4,6 @@ module.exports = {
   
   async list(req, res) {
     try {
-      let movies = [];
-
       const response = await fetch('https://swapi.co/api/films');
       const json = await response.json();
       const results = json.results;
@@ -15,21 +13,17 @@ module.exports = {
         const dateA = new Date(movieA.release_date);
         const dateB = new Date(movieB.release_date);
     
-        if (dateA < dateB) {
-          return -1;
-        } else if (dateA == dateB) {
-          return 0;
-        } else {
-          return 1;
-        }
+        if (dateA < dateB) return -1;
+        else if (dateA == dateB) return 0;
+        else return 1;
       });
 
-      for (let i = 0; i < results.length; i++) {
-        const { title, opening_crawl: openingCrawl } = results[i];
+      const movies = await Promise.all(results.map(async (movie) => {
+        const { title, opening_crawl: openingCrawl } = movie;
         // TODO: use SQL group by + count to fetch comment counts for all movies at once
-        const commentsCount = await Comment.count({ movieId: results[i].episode_id });
-        movies.push({ title, openingCrawl, commentsCount });
-      }
+        const commentsCount = await Comment.count({ movieId: movie.episode_id });
+        return { title, openingCrawl, commentsCount };
+      }));
 
       return res.status(200).json({ message: 'Movies retrieved sucessfully.', data: movies });
     } catch (err) {
@@ -39,8 +33,6 @@ module.exports = {
 
   async characters(req, res) {
     try {
-      let characters = [];
-
       const movieId = req.params.id;
       const response = await fetch(`https://swapi.co/api/films/${movieId}`);
       const json = await response.json();
@@ -49,25 +41,18 @@ module.exports = {
       }
       const allCharacterUrls = json.characters;
       // get all characters
-      const allCharacters = [];
-      await Promise.all(allCharacterUrls.map(async (url) => {
+      const allCharacters = await Promise.all(allCharacterUrls.map(async (url) => {
         const charRes = await fetch(url);
         const char = await charRes.json();
-        allCharacters.push(char);
+        return char;
       }));
 
       const { sortBy, orderBy, genderFilter } = req.query;
 
       // filter characters by gender
-      if (genderFilter) {
-        for (let i = 0; i < allCharacters.length; i++) {
-          if (allCharacters[i].gender == genderFilter) {
-            characters.push(allCharacters[i]);
-          }
-        }
-      } else {
-        characters.push(...allCharacters);
-      }
+      const characters = genderFilter
+        ? allCharacters.filter(character => character.gender == genderFilter)
+        : allCharacters;
 
       // sort characters (in ascending order)
       const categories = ['name', 'gender', 'height'];
@@ -86,7 +71,7 @@ module.exports = {
         characters.reverse();
       }
 
-      let totalHeightOfCharactersCm = characters.reduce((total, character) => {
+      const totalHeightOfCharactersCm = characters.reduce((total, character) => {
         return total + Number.parseInt(character.height);
       }, 0);
       const meta = {
