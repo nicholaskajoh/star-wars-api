@@ -21,5 +21,10 @@ services:
       - "${POSTGRES_PORT}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-volumes: 
+  cache:
+    image: "redis:4.0.9-alpine"
+    command: redis-server --port ${REDIS_PORT}
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+volumes:
   pgdata:

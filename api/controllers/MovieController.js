@@ -4,12 +4,10 @@ module.exports = {
   
   async list(req, res) {
     try {
-      const response = await fetch('https://swapi.co/api/films');
-      const json = await response.json();
-      const results = json.results;
+      const movieResults = await MovieService.getMovies();
 
       // sort movies by release date from earliest to newest
-      results.sort((movieA, movieB) => {
+      movieResults.sort((movieA, movieB) => {
         const dateA = new Date(movieA.release_date);
         const dateB = new Date(movieB.release_date);
     
@@ -18,9 +16,8 @@ module.exports = {
         else return 1;
       });
 
-      const movies = await Promise.all(results.map(async (movie) => {
+      const movies = await Promise.all(movieResults.map(async (movie) => {
         const { title, opening_crawl: openingCrawl } = movie;
-        // TODO: use SQL group by + count to fetch comment counts for all movies at once
         const commentsCount = await Comment.count({ movieId: movie.episode_id });
         return { title, openingCrawl, commentsCount };
       }));
@@ -34,17 +31,14 @@ module.exports = {
   async characters(req, res) {
     try {
       const movieId = req.params.id;
-      const response = await fetch(`https://swapi.co/api/films/${movieId}`);
-      const json = await response.json();
-      if (json.hasOwnProperty('detail') && json.detail == 'Not found') {
-        return res.status(404).json({ message: 'Movie not found.' });
-      }
-      const allCharacterUrls = json.characters;
+      const movie = await MovieService.getMovie(movieId);
+      if (!movie) return res.status(404).json({ message: 'Movie not found.' });
+      
+      const allCharacterUrls = movie.characters;
       // get all characters
       const allCharacters = await Promise.all(allCharacterUrls.map(async (url) => {
-        const charRes = await fetch(url);
-        const char = await charRes.json();
-        return char;
+        const character = await MovieService.getCharacter(url);
+        return character;
       }));
 
       const { sortBy, orderBy, genderFilter } = req.query;
