@@ -58,10 +58,16 @@ module.exports = {
       const categories = ['name', 'gender', 'height'];
       if (sortBy && categories.includes(sortBy)) {
         characters.sort((charA, charB) => {
-          const propA = String(charA[sortBy]).toLowerCase();
-          const propB = String(charB[sortBy]).toLowerCase();
-          if (propA < propB) return -1;
-          if (propA > propB) return 1;
+          const getComparisonVal = (val) => {
+            if (!isNaN(val)) return +val;
+            if (val == 'unknown') return String(Number.MAX_SAFE_INTEGER);
+            return String(val).toLowerCase();
+          };
+          const valA = getComparisonVal(charA[sortBy]);
+          const valB = getComparisonVal(charB[sortBy]);
+
+          if (valA < valB) return -1;
+          if (valA > valB) return 1;
           return 0;
         });
       }
@@ -72,13 +78,14 @@ module.exports = {
       }
 
       const totalHeightOfCharactersCm = characters.reduce((total, character) => {
-        return total + Number.parseInt(character.height);
+        const height = character.height == 'unknown' ? 0 : Number.parseInt(character.height);
+        return total + height;
       }, 0);
       const meta = {
         totalNumberOfCharacters: characters.length,
         totalHeightOfCharactersCm,
-        totalHeightOfCharactersFt: totalHeightOfCharactersCm / 30.48,
-        totalHeightOfCharactersIn: totalHeightOfCharactersCm / 2.54,
+        totalHeightOfCharactersFt: 5 * totalHeightOfCharactersCm / 170,
+        totalHeightOfCharactersIn: 6.93 * totalHeightOfCharactersCm / 170,
       };
       return res.status(200).json({
         message: 'Characters retrieved sucessfully.', data: characters, meta,
